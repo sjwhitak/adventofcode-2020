@@ -19,7 +19,6 @@ for i in range(len(crabs)):
 print(np.min(distance))
 
 # Calc part 2 distance
-# crabs = np.array([16,1,2,0,4,2,7,1,2,14])
 crabs_positions = np.arange(np.max(crabs)+1)
 crabs_distances = np.zeros(crabs_positions.shape)
 

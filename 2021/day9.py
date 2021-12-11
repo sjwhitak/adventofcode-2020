@@ -23,18 +23,6 @@ for x in range(x_max):
             local_minima.append(floor[x,y]+1)
 print( np.sum(local_minima) )
 
-# Part 2 -- map out sizes of surrounding contours with 9 being boundary
-floor_mask = floor != 9
-
-# I cheat and know that (0,0) will start on a basin
-x = 0
-y = 0
-
-
-# Find one basin
-valid_positions = [(0,0)]
-previous_positions = []
-count = 0
 
 def basin_count(mask, position):
     valid_positions = [position]
@@ -71,6 +59,9 @@ def basin_count(mask, position):
                                  
         # Move to the next position
         valid_positions.pop(0)
+        
+# Part 2 -- map out sizes of surrounding contours with 9 being boundary
+floor_mask = floor != 9
 
 # Search each position for a basin
 basin_sizes = list()

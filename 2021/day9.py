@@ -10,50 +10,21 @@ y_max = len(floor[0,:])
 
 local_minima = list()
 
+adjacents = [(0, 1), (1, 0), (-1, 0), (0, -1)]
 for x in range(x_max):
     for y in range(y_max):
-        
-        # Middle areas
-        if x > 0 and y > 0 and x < x_max-1 and y < y_max-1:
-            if floor[x,y] < floor[x+1,y] and \
-               floor[x,y] < floor[x-1,y] and \
-               floor[x,y] < floor[x,y+1] and \
-               floor[x,y] < floor[x,y-1]:
-                   local_minima.append(floor[x,y]+1)
-        
-        # 4 Corners
-        if x == 0 and y == 0:
-            if floor[x,y] < floor[x+1,y] and floor[x,y] < floor[x,y+1]:
-                local_minima.append(floor[x,y]+1)
-        if x == x_max-1 and y == 0:
-            if floor[x,y] < floor[x-1,y] and floor[x,y] < floor[x,y+1]:
-                local_minima.append(floor[x,y]+1)
-        if x == 0 and y == y_max-1:
-            if floor[x,y] < floor[x+1,y] and floor[x,y] < floor[x,y-1]:
-                local_minima.append(floor[x,y]+1)
-        if x == x_max-1 and y == y_max-1:
-            if floor[x,y] < floor[x-1,y] and floor[x,y] < floor[x,y-1]:
-                local_minima.append(floor[x,y]+1)
-                
-        # Four edges
-        if x == 0 and (y>0 and y<y_max-1):
-            if floor[x,y] < floor[x+1,y] and \
-                floor[x,y] < floor[x,y+1] and \
-                floor[x,y] < floor[x,y-1]:
-                local_minima.append(floor[x,y]+1)
-        if x == x_max-1 and (y>0 and y<y_max-1):
-            if floor[x,y] < floor[x-1,y] and \
-                floor[x,y] < floor[x,y+1] and \
-                floor[x,y] < floor[x,y-1]:
-                local_minima.append(floor[x,y]+1)
-        if (x>0 and x<x_max-1) and y == 0:
-            if floor[x,y] < floor[x+1,y] and \
-                floor[x,y] < floor[x-1,y] and \
-                floor[x,y] < floor[x,y+1]:
-                local_minima.append(floor[x,y]+1)
-        if (x>0 and x<x_max-1) and y == y_max-1:
-            if floor[x,y] < floor[x+1,y] and \
-                floor[x,y] < floor[x-1,y] and \
-                floor[x,y] < floor[x,y-1]:
-                local_minima.append(floor[x,y]+1)
+        minima = True
+        for dx, dy in adjacents:
+            if x+dx >= 0 and x+dx < x_max and y+dy >= 0 and y+dy < y_max:
+                if floor[x,y] >= floor[x+dx,y+dy]:
+                    minima = False
+                    break
+        if minima:
+            local_minima.append(floor[x,y]+1)
 print( np.sum(local_minima) )
+
+# Part 2 is looking for boundaries of 9's, then counting the area 
+# surrounding the 9's.
+floor_mask = floor != 9
+local_minima = list()
+# Run through the tiles 

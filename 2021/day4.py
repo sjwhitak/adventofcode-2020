@@ -1,30 +1,21 @@
 import numpy as np
 
 def check_bingo(board_mask):
-
-        
-    
     for i in range(5):
         # Vertical
         if np.all(board_mask[i,:]):
             return True
         # Horizontal
         if np.all(board_mask[:,i]):
-            return True    
-        
-    # Diagonal
-    # mask1 = np.zeros((5,5), dtype=bool)
-    # mask2 = np.zeros((5,5), dtype=bool)
-    # for i in range(5):
-    #     mask1[i,i] = True
-    #     mask2[i,-(i+1)] = True        
-    # if np.array_equal(mask1, np.logical_and(mask1, board_mask)):
-    #     return True
-        
-    # if np.array_equal(mask2, np.logical_and(mask2, board_mask)):
-    #     return True
-    
+            return True
     return False
+
+def print_answer(board, board_mask, board_number):
+    board_mask = np.squeeze(board_mask)
+    board = np.squeeze(board)
+    summation = np.sum(board[~board_mask])
+    print(summation * board_number)
+    return
         
 
 file = open('day4','r').readlines()
@@ -40,6 +31,9 @@ boards = np.array([file[b*6+2:b*6+7] for b in range(board_count)], dtype=int)
 board_mask = np.zeros(boards.shape, dtype=bool)
 bingo_board_mask = np.zeros(boards.shape[0], dtype=bool)
 
+bingo_list = list()
+winner_found = False
+
 # First drawn number
 for counts,count in enumerate(data):
     # numpy mask count
@@ -50,14 +44,20 @@ for counts,count in enumerate(data):
         board_mask[i] |= board == count_mask
         bingo_board_mask[i] = check_bingo(board_mask[i])
         
-    # Check if there's a bingo!
-    if np.any(bingo_board_mask):
-        print( np.where(bingo_board_mask)[0] )
+    # Check if there's a bingo! -- Part 1
+    if np.any(bingo_board_mask) and not winner_found:
+        winner = np.where(bingo_board_mask)[0]
+        winner_board = board_mask[winner].copy()
+        winning_number = int(count)
+        winner_found = True
+        
+    # Find the last board to finish -- Part 2
+    if np.sum(~bingo_board_mask) == 1:
+        loser = np.where(~bingo_board_mask)[0]
+    if np.sum(~bingo_board_mask) == 0:
+        loser_board = board_mask[loser].copy()
+        losing_number = int(count)
         break
     
-# Choose the board
-bingo_board = np.squeeze(boards[np.where(bingo_board_mask)])
-
-# Invert mask, then sum
-bingo_mask  = bingo_board[np.squeeze(~board_mask[bingo_board_mask])]
-answer = np.sum(bingo_mask)*int(count)
+print_answer(boards[winner], winner_board, winning_number)
+print_answer(boards[loser], loser_board, losing_number)
